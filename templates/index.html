@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 스마트 학습 플래너 | 10년 차 수험 컨설턴트</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Markdown 렌더링 라이브러리 (Marked.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- 상단 네비게이션 헤더 -->
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <span class="logo-icon">🎯</span>
+        <h1>AI Study Planner</h1>
+      </div>
+      <p class="tagline">10년 차 수험 전문 컨설턴트가 설계하는 초개인화 합격 로드맵</p>
+    </div>
+  </header>
+
+  <!-- 메인 콘텐츠 영역 -->
+  <main class="main-container">
+
+    <!-- 1. 입력 폼 섹션 -->
+    <section class="card form-section" id="formSection">
+      <div class="card-header">
+        <h2>📋 수험생 프로필 및 학습 목표 설정</h2>
+        <p class="section-desc">성공적인 완주를 위해 현재 상황과 목표를 정확히 입력해 주세요.</p>
+      </div>
+
+      <form id="plannerForm" novalidate>
+
+        <!-- 1) 학습 목표 -->
+        <div class="form-group">
+          <label for="goal">학습 목표 / 시험명 <span class="required">*</span></label>
+          <input
+            type="text"
+            id="goal"
+            name="goal"
+            placeholder="예: 정보처리기사 실기, 토익 850점, 파이썬 기초 마스터"
+            required
+          >
+          <small class="helper-text">준비 중인 시험이나 정복하고 싶은 과목명을 입력하세요.</small>
+        </div>
+
+        <!-- 2) 시험일 & 일일 가능 시간 (2열 그리드) -->
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="examDate">목표 시험일 (D-Day) <span class="required">*</span></label>
+            <input
+              type="date"
+              id="examDate"
+              name="exam_date"
+              required
+            >
+          </div>
+          <div class="form-group col">
+            <label for="dailyHours">하루 가능 학습 시간 <span class="required">*</span></label>
+            <div class="input-with-unit">
+              <input
+                type="number"
+                id="dailyHours"
+                name="daily_hours"
+                min="0.5"
+                max="16"
+                step="0.5"
+                placeholder="예: 3"
+                required
+              >
+              <span class="unit">시간</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3) 현재 수준 선택 (Radio 버튼) -->
+        <div class="form-group">
+          <label class="group-label">현재 나의 이해도 및 수준 <span class="required">*</span></label>
+          <div class="radio-options">
+            <label class="radio-card">
+              <input type="radio" name="level" value="입문/기초 부족" checked>
+              <span class="radio-custom"></span>
+              <div class="radio-text">
+                <strong>입문 / 기초</strong>
+                <p>처음 접하거나 노베이스 상태</p>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="level" value="중급/개념 1회독 완료">
+              <span class="radio-custom"></span>
+              <div class="radio-text">
+                <strong>보통 / 1회독</strong>
+                <p>기본 개념을 대략 파악한 상태</p>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="level" value="상급/실전 문제풀이 단계">
+              <span class="radio-custom"></span>
+              <div class="radio-text">
+                <strong>심화 / 실전</strong>
+                <p>점수 상승 및 오답 정리가 필요한 상태</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 4) 취약 영역 -->
+        <div class="form-group">
+          <label for="weakness">가장 집중 보완하고 싶은 취약 영역</label>
+          <input
+            type="text"
+            id="weakness"
+            name="weakness"
+            placeholder="예: 프로그래밍 언어 활용 알고리즘 파트, LC 파트7, 서술형 문항"
+          >
+          <small class="helper-text">작성하지 않으시면 균형 잡힌 기본 커리큘럼으로 설계됩니다.</small>
+        </div>
+
+        <!-- 5) 선호 학습 방식 선택 (Radio 버튼) -->
+        <div class="form-group">
+          <label class="group-label">선호하는 학습 스타일 <span class="required">*</span></label>
+          <div class="radio-options study-styles">
+            <label class="radio-card">
+              <input type="radio" name="study_style" value="개념 및 원리 중심 (탄탄한 이해)" checked>
+              <span class="radio-custom"></span>
+              <div class="radio-text">
+                <strong>개념 집중형</strong>
+                <p>기본서와 원리 위주</p>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="study_style" value="기출 및 실전 문제풀이 중심">
+              <span class="radio-custom"></span>
+              <div class="radio-text">
+                <strong>실전 문제형</strong>
+                <p>기출 반복 및 오답 분석</p>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="study_style" value="핵심 요약 암기 및 단기 집중형">
+              <span class="radio-custom"></span>
+              <div class="radio-text">
+                <strong>요약 암기형</strong>
+                <p>핵심 족보 및 회독 극대화</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 오류 알림 박스 (JS 제어) -->
+        <div class="alert-box error-alert hidden" id="errorAlert"></div>
+
+        <!-- 제출 버튼 -->
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span class="btn-icon">🚀</span> AI 맞춤형 학습 플랜 생성하기
+        </button>
+      </form>
+    </section>
+
+    <!-- 2. 로딩 스피너 섹션 (생성 중 활성화) -->
+    <section class="card loading-section hidden" id="loadingSection">
+      <div class="spinner-container">
+        <div class="spinner"></div>
+      </div>
+      <h3 class="loading-title">AI 전문 컨설턴트가 플랜을 분석 중입니다...</h3>
+      <p class="loading-subtitle" id="loadingMessage">최신 출제 경향과 복습 주기를 설계하고 있습니다.</p>
+      <div class="loading-progress-bar">
+        <div class="loading-progress-fill"></div>
+      </div>
+    </section>
+
+    <!-- 3. 결과 표시 섹션 (생성 완료 후 활성화) -->
+    <section class="card result-section hidden" id="resultSection">
+
+      <!-- 상단 액션 바 및 D-day 배지 -->
+      <div class="result-header">
+        <div class="result-title-group">
+          <h2>✨ 전문 컨설턴트 맞춤 학습 솔루션</h2>
+          <div class="badge-group">
+            <span class="badge badge-target" id="badgeTarget">목표 시험</span>
+            <span class="badge badge-dday" id="badgeDday">D-Day</span>
+          </div>
+        </div>
+        <div class="result-actions">
+          <button type="button" class="btn btn-secondary" id="copyBtn">
+            📋 텍스트 복사
+          </button>
+          <button type="button" class="btn btn-secondary" id="downloadBtn">
+            💾 마크다운(.md) 저장
+          </button>
+          <button type="button" class="btn btn-outline" id="restartBtn">
+            🔄 새로 만들기
+          </button>
+        </div>
+      </div>
+
+      <!-- 진도 달성률 현황 바 -->
+      <div class="progress-tracker">
+        <div class="tracker-header">
+          <span>오늘의 일일 실천 진도율</span>
+          <span class="tracker-score" id="trackerScore">0 / 0 완료 (0%)</span>
+        </div>
+        <div class="tracker-bar">
+          <div class="tracker-fill" id="trackerFill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- 마크다운 플랜 본문 (체크박스 인터랙션 적용) -->
+      <div class="plan-content markdown-body" id="planContent">
+        <!-- AI가 생성한 마크다운이 HTML로 렌더링되어 삽입됩니다 -->
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 AI Study Planner. Powered by Google Gemini 3.5 Flash Lite &amp; Serper API.</p>
+  </footer>
+
+  <!-- 프론트엔드 제어 JS -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
