@@ -21,7 +21,24 @@ logging.basicConfig(
 )
 logger = logging.getLogger("StudyPlanner")
 
+from urllib.parse import parse_qs
+
 app = Flask(__name__)
+
+# Vercel Serverless rewrite 환경에서 실제 요청 경로 복원
+class VercelPathFix:
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        qs = parse_qs(environ.get('QUERY_STRING', ''))
+        if '__path' in qs and qs['__path'] and qs['__path'][0]:
+            environ['PATH_INFO'] = '/' + qs['__path'][0].lstrip('/')
+        elif environ.get('PATH_INFO') in ('/api', '/api/index'):
+            environ['PATH_INFO'] = '/'
+        return self.wsgi_app(environ, start_response)
+
+app.wsgi_app = VercelPathFix(app.wsgi_app)
 
 def get_gemini_client():
     """요청 시점에 .env를 확인하여 Gemini 클라이언트 생성"""
@@ -105,26 +122,10 @@ def custom_static(filename):
     return send_from_directory(app.static_folder, filename)
 
 
-@app.route("/debug", methods=["GET", "POST"])
-@app.route("/api/debug", methods=["GET", "POST"])
-def debug_env():
-    from flask import request
-    return jsonify({
-        "path_info": request.environ.get("PATH_INFO"),
-        "query_string": request.environ.get("QUERY_STRING"),
-        "matched_path": request.environ.get("HTTP_X_MATCHED_PATH"),
-        "invoke_path": request.environ.get("HTTP_X_INVOKE_PATH"),
-        "forwarded_path": request.environ.get("HTTP_X_FORWARDED_PATH"),
-        "method": request.method
-    })
-
-
 @app.route("/")
 @app.route("/api")
 @app.route("/api/index")
 def index():
-    if "dump" in request.args:
-        return jsonify({k: str(v) for k, v in request.environ.items() if isinstance(v, (str, int, bool))})
     return render_template("index.html")
 
 
