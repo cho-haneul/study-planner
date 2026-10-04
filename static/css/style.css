@@ -30,15 +30,20 @@
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  background-color: #1e1b4b;
+}
+
 body {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
   background-color: #1e1b4b;
-  /* 선명하고 생생한 도서관 책꽂이 실물 사진 배경 (가벼운 비네팅만 적용하여 책들이 또렷하게 보임) */
+  /* 선명하고 생생한 도서관 책꽂이 실물 사진 배경 (PC 고해상도 모니터 & 모바일 최적화) */
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.28)),
-    url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=2000&q=90');
+    linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.22)),
+    url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=2560&q=95');
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-attachment: fixed;
   background-repeat: no-repeat;
   color: var(--text-main);

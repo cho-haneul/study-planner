@@ -1,9 +1,9 @@
 // PWA Service Worker (Cache & Offline Support for Study Planner)
-const CACHE_NAME = 'study-planner-cache-v1';
+const CACHE_NAME = 'study-planner-cache-v2';
 const STATIC_ASSETS = [
   '/',
-  '/static/css/style.css',
-  '/static/js/app.js',
+  '/static/css/style.css?v=20261005_lib_v4',
+  '/static/js/app.js?v=20261005_lib_v4',
   '/static/manifest.json',
   '/static/icons/icon-192.png',
   '/static/icons/icon-512.png',
