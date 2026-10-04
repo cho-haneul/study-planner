@@ -106,11 +106,15 @@ def custom_static(filename):
 
 
 @app.route("/")
+@app.route("/api")
+@app.route("/api/index")
 def index():
     return render_template("index.html")
 
 
 @app.route("/generate", methods=["POST"])
+@app.route("/api/generate", methods=["POST"])
+@app.route("/api/index/generate", methods=["POST"])
 def generate_plan():
     start_time = datetime.now()
     logger.info("=== [플랜 생성 요청 수신] ===")
