@@ -2,7 +2,7 @@ import os
 import json
 import logging
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, make_response, send_from_directory
 from dotenv import load_dotenv
 import requests
 from google import genai
@@ -77,6 +77,32 @@ def search_web_serper(query: str) -> str:
     except Exception as e:
         logger.warning(f"Serper 검색 건너뜀: {str(e)}")
     return ""
+
+
+@app.route('/sw.js')
+@app.route('/api/sw.js')
+@app.route('/api/index/sw.js')
+def service_worker():
+    """PWA Service Worker 서빙"""
+    response = make_response(send_from_directory(app.static_folder, 'sw.js'))
+    response.headers['Content-Type'] = 'application/javascript'
+    return response
+
+
+@app.route('/manifest.json')
+@app.route('/api/manifest.json')
+@app.route('/api/index/manifest.json')
+def manifest():
+    """PWA Web App Manifest 서빙"""
+    response = make_response(send_from_directory(app.static_folder, 'manifest.json'))
+    response.headers['Content-Type'] = 'application/manifest+json'
+    return response
+
+
+@app.route('/static/<path:filename>')
+def custom_static(filename):
+    """정적 에셋 서빙"""
+    return send_from_directory(app.static_folder, filename)
 
 
 @app.route("/")
