@@ -172,11 +172,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 3. 로딩 안내 문구 롤링 애니메이션
   const loadingMessages = [
-    "수험생의 가용 시간과 취약 영역을 정밀 분석 중입니다...",
-    "Serper 최신 출제 경향 및 핵심 자료를 탐색하고 있습니다...",
-    "에빙하우스 망각곡선 기반 과학적 복습 주기를 설계 중입니다...",
-    "실전력 극대화를 위한 일일 맞춤형 실천 루틴을 계산하고 있습니다...",
-    "10년 차 수험 컨설턴트의 1:1 맞춤형 최종 플랜을 정리 중입니다..."
+    "📚 도서관 서가에서 수험생의 가용 시간과 취약 단원을 정밀 분석 중입니다...",
+    "📖 Serper 최신 출제 경향 및 핵심 학습 자료를 탐색하고 있습니다...",
+    "🧠 에빙하우스 망각곡선 기반 과학적 복습 주기를 설계 중입니다...",
+    "⏳ 실전력 극대화를 위한 일일 맞춤형 독서 & 실천 루틴을 계산하고 있습니다...",
+    "🏛️ 10년 차 수험 컨설턴트의 1:1 맞춤형 최종 플랜을 서가에 정리 중입니다..."
   ];
 
   function startLoadingAnimation() {
@@ -292,8 +292,8 @@ document.addEventListener("DOMContentLoaded", () => {
     currentRawMarkdown = data.plan_markdown;
 
     // 배지 업데이트
-    badgeTarget.textContent = `🎯 ${data.goal}`;
-    badgeDday.textContent = `D-${data.days_left}일`;
+    badgeTarget.textContent = `📕 ${data.goal}`;
+    badgeDday.textContent = `🔖 D-${data.days_left}일`;
 
     // 마크다운 파싱 및 본문 삽입 (Marked.js 사용)
     planContent.innerHTML = marked.parse(data.plan_markdown);
@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await navigator.clipboard.writeText(currentRawMarkdown);
       const originalText = copyBtn.innerHTML;
-      copyBtn.innerHTML = "✅ 복사 완료!";
+      copyBtn.innerHTML = "📖 복사 완료!";
       copyBtn.style.backgroundColor = "#dcfce7";
 
       setTimeout(() => {

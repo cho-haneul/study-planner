@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI 스마트 학습 플래너 | 10년 차 수험 컨설턴트</title>
+  <title>📚 AI 도서관 학습 플래너 | 10년 차 수험 컨설턴트</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,9 +51,9 @@
   <!-- 4자리 PIN 입장 게이트키퍼 모달 -->
   <div id="pinGate" class="pin-gate">
     <div class="pin-gate-card">
-      <p class="pin-gate-kicker">🎯 AI Study Planner</p>
-      <h2>비밀번호 4자리를 입력하세요</h2>
-      <p class="pin-gate-help">한 번 입력하면 이 브라우저에서 24시간 동안 유지됩니다.</p>
+      <p class="pin-gate-kicker">📚 AI Library Study Planner</p>
+      <h2>🔐 서재 입장을 위한 비밀번호 4자리</h2>
+      <p class="pin-gate-help">비밀번호를 입력하시면 도서관 맞춤 서재가 24시간 동안 열립니다.</p>
       <form id="pinGateForm" class="pin-gate-form" autocomplete="off">
         <div class="pin-boxes" id="pinBoxes">
           <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="비밀번호 1번째 자리" required autofocus>
@@ -62,9 +62,9 @@
           <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="비밀번호 4번째 자리" required>
         </div>
         <p class="pin-gate-error" id="pinGateError" role="alert"></p>
-        <button type="submit" class="btn btn-primary pin-gate-submit" id="pinSubmitBtn">입장하기</button>
+        <button type="submit" class="btn btn-primary pin-gate-submit" id="pinSubmitBtn">📖 서재 입장하기</button>
       </form>
-      <p class="pin-gate-credit">AI 학습 플래너 · 안전한 개인 맞춤 수험 로드맵</p>
+      <p class="pin-gate-credit">📚 도서관 AI 학습 플래너 · 지혜의 서가에서 펼치는 합격 로드맵</p>
     </div>
   </div>
 
@@ -72,14 +72,14 @@
   <header class="header">
     <div class="header-container">
       <div class="logo">
-        <span class="logo-icon">🎯</span>
+        <span class="logo-icon">📚</span>
         <h1>AI Study Planner</h1>
       </div>
-      <p class="tagline">10년 차 수험 전문 컨설턴트가 설계하는 초개인화 합격 로드맵</p>
+      <p class="tagline">🏛️ 조용한 도서관 서재에서 10년 차 수험 컨설턴트가 설계하는 합격 로드맵</p>
       <!-- PWA 앱 설치 버튼 -->
       <div class="pwa-header-action">
         <button id="pwaInstallBtn" class="btn btn-pwa" type="button">
-          📲 앱 설치하기
+          📖 서재 앱 설치하기
         </button>
       </div>
     </div>
@@ -91,15 +91,15 @@
     <!-- 1. 입력 폼 섹션 -->
     <section class="card form-section" id="formSection">
       <div class="card-header">
-        <h2>📋 수험생 프로필 및 학습 목표 설정</h2>
-        <p class="section-desc">성공적인 완주를 위해 현재 상황과 목표를 정확히 입력해 주세요.</p>
+        <h2>📖 수험생 독서 &amp; 학습 프로필 설정</h2>
+        <p class="section-desc">성공적인 완주를 위해 현재 상황과 학습할 교재/목표를 정확히 입력해 주세요.</p>
       </div>
 
       <form id="plannerForm" novalidate>
 
         <!-- 1) 학습 목표 -->
         <div class="form-group">
-          <label for="goal">학습 목표 / 시험명 <span class="required">*</span></label>
+          <label for="goal">📕 정복할 시험 / 과목·도서명 <span class="required">*</span></label>
           <input
             type="text"
             id="goal"
@@ -107,13 +107,13 @@
             placeholder="예: 정보처리기사 실기, 토익 850점, 파이썬 기초 마스터"
             required
           >
-          <small class="helper-text">준비 중인 시험이나 정복하고 싶은 과목명을 입력하세요.</small>
+          <small class="helper-text">준비 중인 시험이나 정복하고 싶은 과목/교재명을 입력하세요.</small>
         </div>
 
         <!-- 2) 시험일 & 일일 가능 시간 (2열 그리드) -->
         <div class="form-row">
           <div class="form-group col">
-            <label for="examDate">목표 시험일 (D-Day) <span class="required">*</span></label>
+            <label for="examDate">🔖 목표 시험일 (D-Day 책갈피) <span class="required">*</span></label>
             <input
               type="date"
               id="examDate"
@@ -122,7 +122,7 @@
             >
           </div>
           <div class="form-group col">
-            <label for="dailyHours">하루 가능 학습 시간 <span class="required">*</span></label>
+            <label for="dailyHours">⏳ 일일 집중 학습 시간 <span class="required">*</span></label>
             <div class="input-with-unit">
               <input
                 type="number"
@@ -141,30 +141,30 @@
 
         <!-- 3) 현재 수준 선택 (Radio 버튼) -->
         <div class="form-group">
-          <label class="group-label">현재 나의 이해도 및 수준 <span class="required">*</span></label>
+          <label class="group-label">📖 현재 나의 이해도 및 독서 수준 <span class="required">*</span></label>
           <div class="radio-options">
             <label class="radio-card">
               <input type="radio" name="level" value="입문/기초 부족" checked>
               <span class="radio-custom"></span>
               <div class="radio-text">
-                <strong>입문 / 기초</strong>
-                <p>처음 접하거나 노베이스 상태</p>
+                <strong>📗 입문 / 기초</strong>
+                <p>노베이스 · 첫 장을 펼친 상태</p>
               </div>
             </label>
             <label class="radio-card">
               <input type="radio" name="level" value="중급/개념 1회독 완료">
               <span class="radio-custom"></span>
               <div class="radio-text">
-                <strong>보통 / 1회독</strong>
-                <p>기본 개념을 대략 파악한 상태</p>
+                <strong>📘 보통 / 1회독</strong>
+                <p>기본서 1독 · 개념 파악 상태</p>
               </div>
             </label>
             <label class="radio-card">
               <input type="radio" name="level" value="상급/실전 문제풀이 단계">
               <span class="radio-custom"></span>
               <div class="radio-text">
-                <strong>심화 / 실전</strong>
-                <p>점수 상승 및 오답 정리가 필요한 상태</p>
+                <strong>📙 심화 / 실전</strong>
+                <p>기출 문제집 풀이 및 오답 정복</p>
               </div>
             </label>
           </div>
@@ -172,42 +172,42 @@
 
         <!-- 4) 취약 영역 -->
         <div class="form-group">
-          <label for="weakness">가장 집중 보완하고 싶은 취약 영역</label>
+          <label for="weakness">📑 가장 집중 보완하고 싶은 취약 단원 / 파트</label>
           <input
             type="text"
             id="weakness"
             name="weakness"
             placeholder="예: 프로그래밍 언어 활용 알고리즘 파트, LC 파트7, 서술형 문항"
           >
-          <small class="helper-text">작성하지 않으시면 균형 잡힌 기본 커리큘럼으로 설계됩니다.</small>
+          <small class="helper-text">작성하지 않으시면 균형 잡힌 기본 서가 커리큘럼으로 설계됩니다.</small>
         </div>
 
         <!-- 5) 선호 학습 방식 선택 (Radio 버튼) -->
         <div class="form-group">
-          <label class="group-label">선호하는 학습 스타일 <span class="required">*</span></label>
+          <label class="group-label">📚 선호하는 학습 &amp; 독서 스타일 <span class="required">*</span></label>
           <div class="radio-options study-styles">
             <label class="radio-card">
               <input type="radio" name="study_style" value="개념 및 원리 중심 (탄탄한 이해)" checked>
               <span class="radio-custom"></span>
               <div class="radio-text">
-                <strong>개념 집중형</strong>
-                <p>기본서와 원리 위주</p>
+                <strong>📖 개념서 집중형</strong>
+                <p>기본서 정독과 원리 탐구</p>
               </div>
             </label>
             <label class="radio-card">
               <input type="radio" name="study_style" value="기출 및 실전 문제풀이 중심">
               <span class="radio-custom"></span>
               <div class="radio-text">
-                <strong>실전 문제형</strong>
-                <p>기출 반복 및 오답 분석</p>
+                <strong>📝 기출 문제형</strong>
+                <p>실전 문제집 반복 &amp; 오답 분석</p>
               </div>
             </label>
             <label class="radio-card">
               <input type="radio" name="study_style" value="핵심 요약 암기 및 단기 집중형">
               <span class="radio-custom"></span>
               <div class="radio-text">
-                <strong>요약 암기형</strong>
-                <p>핵심 족보 및 회독 극대화</p>
+                <strong>📑 핵심 요약형</strong>
+                <p>서브노트 요약 &amp; 회독 극대화</p>
               </div>
             </label>
           </div>
@@ -218,7 +218,7 @@
 
         <!-- 제출 버튼 -->
         <button type="submit" class="btn btn-primary" id="submitBtn">
-          <span class="btn-icon">🚀</span> AI 맞춤형 학습 플랜 생성하기
+          <span class="btn-icon">📚</span> 도서관 맞춤형 학습 플랜 펼치기
         </button>
       </form>
     </section>
@@ -228,8 +228,8 @@
       <div class="spinner-container">
         <div class="spinner"></div>
       </div>
-      <h3 class="loading-title">AI 전문 컨설턴트가 플랜을 분석 중입니다...</h3>
-      <p class="loading-subtitle" id="loadingMessage">최신 출제 경향과 복습 주기를 설계하고 있습니다.</p>
+      <h3 class="loading-title">📚 도서관 서가를 탐색하며 맞춤 플랜을 집필 중입니다...</h3>
+      <p class="loading-subtitle" id="loadingMessage">최적의 교재 로드맵과 에빙하우스 망각곡선 복습 주기를 설계하고 있습니다.</p>
       <div class="loading-progress-bar">
         <div class="loading-progress-fill"></div>
       </div>
@@ -241,21 +241,21 @@
       <!-- 상단 액션 바 및 D-day 배지 -->
       <div class="result-header">
         <div class="result-title-group">
-          <h2>✨ 전문 컨설턴트 맞춤 학습 솔루션</h2>
+          <h2>📚 나만의 도서관 맞춤 학습 로드맵</h2>
           <div class="badge-group">
-            <span class="badge badge-target" id="badgeTarget">목표 시험</span>
-            <span class="badge badge-dday" id="badgeDday">D-Day</span>
+            <span class="badge badge-target" id="badgeTarget">📕 목표 도서/시험</span>
+            <span class="badge badge-dday" id="badgeDday">🔖 D-Day</span>
           </div>
         </div>
         <div class="result-actions">
           <button type="button" class="btn btn-secondary" id="copyBtn">
-            📋 텍스트 복사
+            📋 플랜 복사
           </button>
           <button type="button" class="btn btn-secondary" id="downloadBtn">
-            💾 마크다운(.md) 저장
+            💾 플랜 책갈피 저장(.md)
           </button>
           <button type="button" class="btn btn-outline" id="restartBtn">
-            🔄 새로 만들기
+            📖 다른 목표 플랜 짜기
           </button>
         </div>
       </div>
@@ -263,7 +263,7 @@
       <!-- 진도 달성률 현황 바 -->
       <div class="progress-tracker">
         <div class="tracker-header">
-          <span>오늘의 일일 실천 진도율</span>
+          <span>📖 오늘 완독 &amp; 실천 진도율</span>
           <span class="tracker-score" id="trackerScore">0 / 0 완료 (0%)</span>
         </div>
         <div class="tracker-bar">
@@ -280,19 +280,19 @@
   </main>
 
   <footer class="footer">
-    <p>© 2026 AI Study Planner. Powered by Google Gemini 3.5 Flash Lite &amp; Serper API.</p>
+    <p>© 2026 AI Library Study Planner. Powered by Google Gemini &amp; Serper API.</p>
   </footer>
 
   <!-- 모바일 설치 안내 팝업 모달 (iOS 및 인앱 브라우저 대응) -->
   <div id="mobileInstallModal" class="mobile-modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="mobile-modal-card">
       <div class="mobile-modal-header">
-        <h3 id="mobileModalTitle">📱 모바일 앱 설치 안내</h3>
+        <h3 id="mobileModalTitle">📚 모바일 서재 앱 설치 안내</h3>
         <button id="closeMobileModal" class="mobile-modal-close" type="button" aria-label="닫기">&times;</button>
       </div>
       <div class="mobile-modal-body">
         <p class="mobile-modal-desc" id="mobileModalDesc">
-          스마트폰 홈 화면에 앱으로 추가하여 전체 화면으로 쾌적하게 학습하세요!
+          스마트폰 홈 화면에 책장처럼 바로가기를 추가하여 언제 어디서나 집중 학습하세요!
         </p>
         <div class="mobile-steps" id="mobileModalSteps">
           <!-- 동적으로 iOS / InApp / Android 단계 렌더링 -->
@@ -300,7 +300,7 @@
       </div>
       <div class="mobile-modal-footer">
         <button id="confirmMobileModal" class="btn btn-primary mobile-modal-confirm" type="button">
-          확인했습니다
+          📖 확인했습니다
         </button>
       </div>
     </div>
