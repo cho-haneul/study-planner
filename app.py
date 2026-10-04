@@ -105,6 +105,20 @@ def custom_static(filename):
     return send_from_directory(app.static_folder, filename)
 
 
+@app.route("/debug", methods=["GET", "POST"])
+@app.route("/api/debug", methods=["GET", "POST"])
+def debug_env():
+    from flask import request
+    return jsonify({
+        "path_info": request.environ.get("PATH_INFO"),
+        "query_string": request.environ.get("QUERY_STRING"),
+        "matched_path": request.environ.get("HTTP_X_MATCHED_PATH"),
+        "invoke_path": request.environ.get("HTTP_X_INVOKE_PATH"),
+        "forwarded_path": request.environ.get("HTTP_X_FORWARDED_PATH"),
+        "method": request.method
+    })
+
+
 @app.route("/")
 @app.route("/api")
 @app.route("/api/index")
