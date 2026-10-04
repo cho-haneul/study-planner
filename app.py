@@ -122,6 +122,7 @@ def service_worker():
     """PWA Service Worker 서빙"""
     response = make_response(send_from_directory(app.static_folder, 'sw.js'))
     response.headers['Content-Type'] = 'application/javascript'
+    response.headers['Service-Worker-Allowed'] = '/'
     return response
 
 

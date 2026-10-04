@@ -11,7 +11,7 @@
   <!-- Markdown 렌더링 라이브러리 (Marked.js) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <!-- PWA Settings -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="/static/manifest.json">
   <meta name="theme-color" content="#4f46e5">
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
   <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
@@ -21,10 +21,22 @@
   <!-- Early PWA beforeinstallprompt Capture -->
   <script>
     window.deferredPrompt = null;
+    window.__pwaReadyCallbacks = [];
+    window.onPwaReady = function(cb) {
+      if (window.deferredPrompt) {
+        cb(window.deferredPrompt);
+      } else {
+        window.__pwaReadyCallbacks.push(cb);
+      }
+    };
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       window.deferredPrompt = e;
       console.log('✅ [PWA] beforeinstallprompt 포착 완료');
+      while (window.__pwaReadyCallbacks && window.__pwaReadyCallbacks.length > 0) {
+        const cb = window.__pwaReadyCallbacks.shift();
+        try { cb(e); } catch(err) { console.error(err); }
+      }
     });
   </script>
 </head>
@@ -280,21 +292,49 @@
       pwaBtn.style.cursor = 'default';
     }
 
-    // 2. Service Worker 등록
+    // 2. Service Worker 즉각 등록 (load 대기 없이 즉각 백그라운드 활성화)
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((reg) => console.log('✅ PWA Service Worker 등록 성공:', reg.scope))
-          .catch((err) => console.error('❌ PWA Service Worker 등록 실패:', err));
-      });
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then((reg) => console.log('✅ PWA Service Worker 등록 성공:', reg.scope))
+        .catch((err) => console.error('❌ PWA Service Worker 등록 실패:', err));
     }
 
-    // 3. 앱 설치 버튼 클릭 이벤트: 누르면 네이티브 설치 다이얼로그 즉시 호출
+    // 3. 이미 설치된 앱인지 사전 감지
+    if ('getInstalledRelatedApps' in navigator && pwaBtn && !isStandalone) {
+      navigator.getInstalledRelatedApps().then((apps) => {
+        if (apps && apps.length > 0) {
+          pwaBtn.textContent = '✨ 이미 설치된 앱';
+          pwaBtn.disabled = true;
+        }
+      }).catch(() => {});
+    }
+
+    // 4. 앱 설치 버튼 클릭 이벤트: 누르면 네이티브 설치 다이얼로그 즉시 호출
     if (pwaBtn && !isStandalone) {
       pwaBtn.addEventListener('click', async () => {
-        if (window.deferredPrompt) {
-          window.deferredPrompt.prompt();
-          const { outcome } = await window.deferredPrompt.userChoice;
+        let promptEvent = window.deferredPrompt;
+
+        // 아직 브라우저 프롬프트가 대기 중인 경우 최대 1.5초 대기 후 즉시 호출
+        if (!promptEvent) {
+          pwaBtn.disabled = true;
+          const origText = pwaBtn.textContent;
+          pwaBtn.textContent = '⏳ 설치 창 준비 중...';
+
+          promptEvent = await new Promise((resolve) => {
+            if (window.onPwaReady) {
+              window.onPwaReady(resolve);
+            }
+            setTimeout(() => resolve(null), 1500);
+          });
+
+          pwaBtn.disabled = false;
+          pwaBtn.textContent = origText;
+        }
+
+        if (promptEvent) {
+          // 브라우저의 네이티브 설치 다이얼로그 즉시 호출
+          promptEvent.prompt();
+          const { outcome } = await promptEvent.userChoice;
           console.log('PWA 설치 선택:', outcome);
           if (outcome === 'accepted') {
             pwaBtn.textContent = '✨ 설치 완료!';
@@ -302,16 +342,16 @@
           }
           window.deferredPrompt = null;
         } else {
-          // 브라우저에서 이미 설치되었거나 주소창 아이콘으로 설치 가능한 상태
-          pwaBtn.textContent = '주소창 오른쪽 [설치 아이콘] 클릭';
+          // 이미 설치되어 있거나 브라우저 기준 준비 완료 상태
+          pwaBtn.textContent = '✨ 이미 설치되었거나 준비 완료';
           setTimeout(() => {
             if (!pwaBtn.disabled) pwaBtn.textContent = '📲 앱 설치하기';
-          }, 3500);
+          }, 2000);
         }
       });
     }
 
-    // 4. 설치 완료 이벤트 감지
+    // 5. 설치 완료 이벤트 감지
     window.addEventListener('appinstalled', () => {
       console.log('🎉 PWA 앱 설치 완료');
       if (pwaBtn) {
