@@ -32,11 +32,11 @@
 
 body {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-  background-color: #0b1120;
-  /* 도서관 책꽂이 실물 고화질 배경 & 가독성을 위한 다크 글래스 오버레이 */
+  background-color: #1e1b4b;
+  /* 선명하고 생생한 도서관 책꽂이 실물 사진 배경 (가벼운 비네팅만 적용하여 책들이 또렷하게 보임) */
   background-image: 
-    linear-gradient(rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.85)),
-    url('https://images.unsplash.com/photo-1507842229451-7f01be7f7a26?auto=format&fit=crop&w=2000&q=85');
+    linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.28)),
+    url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=2000&q=90');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -710,7 +710,7 @@ input[type="number"]:focus {
 body.is-locked .main-container,
 body.is-locked .header,
 body.is-locked .footer {
-  filter: blur(8px);
+  filter: blur(2px);
   pointer-events: none;
   user-select: none;
 }
@@ -723,9 +723,10 @@ body.is-locked .footer {
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: rgba(10, 15, 29, 0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  /* 책꽂이 배경이 뒤로 시원하고 선명하게 투영되도록 연한 투명 오버레이 적용 */
+  background: rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
