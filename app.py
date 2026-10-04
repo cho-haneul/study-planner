@@ -123,6 +123,8 @@ def debug_env():
 @app.route("/api")
 @app.route("/api/index")
 def index():
+    if "dump" in request.args:
+        return jsonify({k: str(v) for k, v in request.environ.items() if isinstance(v, (str, int, bool))})
     return render_template("index.html")
 
 
