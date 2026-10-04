@@ -10,10 +10,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Markdown 렌더링 라이브러리 (Marked.js) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <!-- PWA Settings -->
+  <!-- Mobile & PWA Settings -->
   <link rel="manifest" href="/static/manifest.json">
   <meta name="theme-color" content="#4f46e5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="StudyPlanner">
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/static/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="/static/icons/icon-512.png">
   <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
   <!-- Custom CSS -->
@@ -277,11 +283,123 @@
     <p>© 2026 AI Study Planner. Powered by Google Gemini 3.5 Flash Lite &amp; Serper API.</p>
   </footer>
 
+  <!-- 모바일 설치 안내 팝업 모달 (iOS 및 인앱 브라우저 대응) -->
+  <div id="mobileInstallModal" class="mobile-modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="mobile-modal-card">
+      <div class="mobile-modal-header">
+        <h3 id="mobileModalTitle">📱 모바일 앱 설치 안내</h3>
+        <button id="closeMobileModal" class="mobile-modal-close" type="button" aria-label="닫기">&times;</button>
+      </div>
+      <div class="mobile-modal-body">
+        <p class="mobile-modal-desc" id="mobileModalDesc">
+          스마트폰 홈 화면에 앱으로 추가하여 전체 화면으로 쾌적하게 학습하세요!
+        </p>
+        <div class="mobile-steps" id="mobileModalSteps">
+          <!-- 동적으로 iOS / InApp / Android 단계 렌더링 -->
+        </div>
+      </div>
+      <div class="mobile-modal-footer">
+        <button id="confirmMobileModal" class="btn btn-primary mobile-modal-confirm" type="button">
+          확인했습니다
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- 프론트엔드 제어 JS -->
   <script src="/static/js/app.js"></script>
-  <!-- PWA Service Worker & Direct Install Handler -->
+  <!-- PWA Service Worker & Direct Install Handler (PC + Mobile) -->
   <script>
     const pwaBtn = document.getElementById('pwaInstallBtn');
+    const mobileModal = document.getElementById('mobileInstallModal');
+    const mobileModalTitle = document.getElementById('mobileModalTitle');
+    const mobileModalDesc = document.getElementById('mobileModalDesc');
+    const mobileModalSteps = document.getElementById('mobileModalSteps');
+    const closeMobileModal = document.getElementById('closeMobileModal');
+    const confirmMobileModal = document.getElementById('confirmMobileModal');
+
+    function hideMobileModal() {
+      if (mobileModal) mobileModal.classList.add('hidden');
+    }
+
+    if (closeMobileModal) closeMobileModal.addEventListener('click', hideMobileModal);
+    if (confirmMobileModal) confirmMobileModal.addEventListener('click', hideMobileModal);
+    if (mobileModal) {
+      mobileModal.addEventListener('click', (e) => {
+        if (e.target === mobileModal) hideMobileModal();
+      });
+    }
+
+    function showMobileGuide(type) {
+      if (!mobileModal) return;
+
+      if (type === 'ios') {
+        mobileModalTitle.innerHTML = '🍎 iPhone / iPad 앱 설치';
+        mobileModalDesc.textContent = 'Safari 브라우저의 홈 화면 추가 기능으로 1초 만에 앱을 설치하세요:';
+        mobileModalSteps.innerHTML = `
+          <div class="mobile-step-item">
+            <span class="mobile-step-num">1</span>
+            <div class="mobile-step-content">
+              Safari 화면 하단 중앙의 <span class="mobile-step-highlight">공유 버튼 (⎋ 네모+위화살표)</span>을 터치합니다.
+            </div>
+          </div>
+          <div class="mobile-step-item">
+            <span class="mobile-step-num">2</span>
+            <div class="mobile-step-content">
+              메뉴 목록을 아래로 내려 <span class="mobile-step-highlight">홈 화면에 추가</span>를 선택합니다.
+            </div>
+          </div>
+          <div class="mobile-step-item">
+            <span class="mobile-step-num">3</span>
+            <div class="mobile-step-content">
+              우측 상단의 <strong>[추가]</strong>를 누르면 홈 화면에 앱 아이콘이 생성됩니다!
+            </div>
+          </div>
+        `;
+      } else if (type === 'inapp') {
+        mobileModalTitle.innerHTML = '⚠️ 일반 브라우저에서 열기';
+        mobileModalDesc.textContent = '카카오톡/네이버 인앱 브라우저에서는 앱 설치가 제한됩니다:';
+        mobileModalSteps.innerHTML = `
+          <div class="mobile-step-item">
+            <span class="mobile-step-num">1</span>
+            <div class="mobile-step-content">
+              화면 우측 상단/하단의 <span class="mobile-step-highlight">더보기(⋮ 또는 ···)</span>를 누릅니다.
+            </div>
+          </div>
+          <div class="mobile-step-item">
+            <span class="mobile-step-num">2</span>
+            <div class="mobile-step-content">
+              <span class="mobile-step-highlight">다른 브라우저로 열기</span> 또는 <strong>Chrome / Safari로 열기</strong>를 선택합니다.
+            </div>
+          </div>
+          <div class="mobile-step-item">
+            <span class="mobile-step-num">3</span>
+            <div class="mobile-step-content">
+              열린 브라우저에서 다시 <strong>[📲 앱 설치하기]</strong>를 누르시면 즉시 설치됩니다!
+            </div>
+          </div>
+        `;
+      } else {
+        mobileModalTitle.innerHTML = '📱 Android 앱 설치 안내';
+        mobileModalDesc.textContent = 'Chrome 또는 삼성인터넷 브라우저에서 앱으로 설치하세요:';
+        mobileModalSteps.innerHTML = `
+          <div class="mobile-step-item">
+            <span class="mobile-step-num">1</span>
+            <div class="mobile-step-content">
+              브라우저 우측 상단의 <span class="mobile-step-highlight">메뉴(⋮)</span> 아이콘을 누릅니다.
+            </div>
+          </div>
+          <div class="mobile-step-item">
+            <span class="mobile-step-num">2</span>
+            <div class="mobile-step-content">
+              <span class="mobile-step-highlight">앱 설치</span> 또는 <span class="mobile-step-highlight">홈 화면에 추가</span>를 터치합니다.
+            </div>
+          </div>
+        `;
+      }
+
+      mobileModal.classList.remove('hidden');
+    }
 
     // 1. 이미 PWA(독립 앱) 모드로 실행 중인지 확인
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -309,12 +427,29 @@
       }).catch(() => {});
     }
 
-    // 4. 앱 설치 버튼 클릭 이벤트: 누르면 네이티브 설치 다이얼로그 즉시 호출
+    // 4. 앱 설치 버튼 클릭 이벤트: PC 및 모바일(Android / iOS) 통합 처리
     if (pwaBtn && !isStandalone) {
       pwaBtn.addEventListener('click', async () => {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isInApp = /KAKAOTALK|NAVER|Instagram|FB_IAB|Line/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
+
+        // 1) 카카오톡/네이버 인앱 브라우저인 경우: 외부 브라우저 안내 모달 표시
+        if (isInApp) {
+          showMobileGuide('inapp');
+          return;
+        }
+
+        // 2) iOS (iPhone / iPad): Apple 사파리는 programmatic prompt 미지원이므로 전용 설치 가이드 모달 표시
+        if (isIOS) {
+          showMobileGuide('ios');
+          return;
+        }
+
+        // 3) Android Chrome/삼성인터넷 & PC Chrome/Edge:
+        //    네이티브 beforeinstallprompt가 포착된 경우 브라우저 설치 팝업 즉각 호출
         let promptEvent = window.deferredPrompt;
 
-        // 아직 브라우저 프롬프트가 대기 중인 경우 최대 1.5초 대기 후 즉시 호출
         if (!promptEvent) {
           pwaBtn.disabled = true;
           const origText = pwaBtn.textContent;
@@ -332,7 +467,7 @@
         }
 
         if (promptEvent) {
-          // 브라우저의 네이티브 설치 다이얼로그 즉시 호출
+          // 브라우저의 네이티브 설치 다이얼로그 즉각 실행
           promptEvent.prompt();
           const { outcome } = await promptEvent.userChoice;
           console.log('PWA 설치 선택:', outcome);
@@ -342,11 +477,15 @@
           }
           window.deferredPrompt = null;
         } else {
-          // 이미 설치되어 있거나 브라우저 기준 준비 완료 상태
-          pwaBtn.textContent = '✨ 이미 설치되었거나 준비 완료';
-          setTimeout(() => {
-            if (!pwaBtn.disabled) pwaBtn.textContent = '📲 앱 설치하기';
-          }, 2000);
+          // Android에서 아직 프롬프트가 미발생한 경우 안내 모달 호출
+          if (isAndroid) {
+            showMobileGuide('android');
+          } else {
+            pwaBtn.textContent = '✨ 이미 설치되었거나 준비 완료';
+            setTimeout(() => {
+              if (!pwaBtn.disabled) pwaBtn.textContent = '📲 앱 설치하기';
+            }, 2000);
+          }
         }
       });
     }
