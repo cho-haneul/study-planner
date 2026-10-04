@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AI Study Planner - Frontend Application Logic
  */
 
@@ -125,7 +125,15 @@ document.addEventListener("DOMContentLoaded", () => {
         })
       });
 
-      const result = await response.json();
+      let result;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        result = await response.json();
+      } else {
+        const errorText = await response.text();
+        console.error("서버 응답:", errorText);
+        throw new Error(`서버 응답 오류 (상태: ${response.status})`);
+      }
 
       if (!response.ok || !result.success) {
         throw new Error(result.error || "플랜 생성 중 서버 오류가 발생했습니다.");
