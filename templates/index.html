@@ -18,6 +18,15 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/css/style.css">
+  <!-- Early PWA beforeinstallprompt Capture -->
+  <script>
+    window.deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      window.deferredPrompt = e;
+      console.log('✅ [PWA] beforeinstallprompt 포착 완료');
+    });
+  </script>
 </head>
 <body class="is-locked">
 
@@ -256,45 +265,13 @@
     <p>© 2026 AI Study Planner. Powered by Google Gemini 3.5 Flash Lite &amp; Serper API.</p>
   </footer>
 
-  <!-- PWA 설치 안내 팝업 모달 -->
-  <div id="pwaModal" class="pwa-modal-overlay hidden">
-    <div class="pwa-modal-card">
-      <div class="pwa-modal-header">
-        <h3>📲 앱으로 설치하여 사용하기</h3>
-        <button id="closePwaModal" class="btn-close" type="button">&times;</button>
-      </div>
-      <div class="pwa-modal-body">
-        <p class="pwa-modal-desc">스마트폰이나 PC에 설치하시면 앱처럼 전체 화면으로 더 빠르고 편리하게 공부할 수 있습니다!</p>
-        <div class="pwa-guide-item">
-          <strong>💻 PC (Chrome / Edge):</strong>
-          <p>브라우저 주소창 맨 오른쪽 끝의 <strong>[모니터/다운로드 아이콘]</strong>을 누르거나, 브라우저 메뉴(⋮)에서 <strong>'앱 설치'</strong>를 선택하세요.</p>
-        </div>
-        <div class="pwa-guide-item">
-          <strong>📱 모바일 Android (Chrome / 삼성인터넷):</strong>
-          <p>브라우저 우측 상단 메뉴(⋮)를 누른 뒤 <strong>'앱 설치'</strong> 또는 <strong>'홈 화면에 추가'</strong>를 선택하세요.</p>
-        </div>
-        <div class="pwa-guide-item">
-          <strong>🍎 iPhone / iPad (Safari):</strong>
-          <p>하단 중앙의 <strong>공유 버튼(네모에 위쪽 화살표)</strong>을 누른 뒤 아래로 내려 <strong>'홈 화면에 추가'</strong>를 누르세요.</p>
-        </div>
-      </div>
-      <div class="pwa-modal-footer">
-        <button id="confirmPwaModal" class="btn btn-primary" type="button">확인했습니다</button>
-      </div>
-    </div>
-  </div>
-
   <!-- 프론트엔드 제어 JS -->
   <script src="/static/js/app.js"></script>
-  <!-- PWA Service Worker & Install Handler -->
+  <!-- PWA Service Worker & Direct Install Handler -->
   <script>
-    let deferredPrompt = null;
     const pwaBtn = document.getElementById('pwaInstallBtn');
-    const pwaModal = document.getElementById('pwaModal');
-    const closePwaModal = document.getElementById('closePwaModal');
-    const confirmPwaModal = document.getElementById('confirmPwaModal');
 
-    // 이미 PWA(독립 앱) 모드로 실행 중인지 확인
+    // 1. 이미 PWA(독립 앱) 모드로 실행 중인지 확인
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     if (isStandalone && pwaBtn) {
       pwaBtn.textContent = '✨ 앱으로 실행 중';
@@ -303,7 +280,7 @@
       pwaBtn.style.cursor = 'default';
     }
 
-    // 1. Service Worker 등록
+    // 2. Service Worker 등록
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -312,45 +289,31 @@
       });
     }
 
-    // 2. 브라우저의 beforeinstallprompt 이벤트 포착
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      console.log('💡 beforeinstallprompt 감지됨: 앱 설치 가능');
-    });
-
-    // 3. 앱 설치 버튼 클릭 이벤트
+    // 3. 앱 설치 버튼 클릭 이벤트: 누르면 네이티브 설치 다이얼로그 즉시 호출
     if (pwaBtn && !isStandalone) {
       pwaBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-          // 브라우저의 네이티브 설치 다이얼로그 즉시 호출
-          deferredPrompt.prompt();
-          const { outcome } = await deferredPrompt.userChoice;
-          console.log('PWA 설치 결과:', outcome);
+        if (window.deferredPrompt) {
+          window.deferredPrompt.prompt();
+          const { outcome } = await window.deferredPrompt.userChoice;
+          console.log('PWA 설치 선택:', outcome);
           if (outcome === 'accepted') {
             pwaBtn.textContent = '✨ 설치 완료!';
             pwaBtn.disabled = true;
           }
-          deferredPrompt = null;
+          window.deferredPrompt = null;
         } else {
-          // 이벤트가 아직 안 떴거나 iOS 등인 경우 친절한 가이드 모달 표시
-          if (pwaModal) pwaModal.classList.remove('hidden');
+          // 브라우저에서 이미 설치되었거나 주소창 아이콘으로 설치 가능한 상태
+          pwaBtn.textContent = '주소창 오른쪽 [설치 아이콘] 클릭';
+          setTimeout(() => {
+            if (!pwaBtn.disabled) pwaBtn.textContent = '📲 앱 설치하기';
+          }, 3500);
         }
       });
     }
 
-    // 4. 모달 닫기
-    if (closePwaModal) closePwaModal.addEventListener('click', () => pwaModal.classList.add('hidden'));
-    if (confirmPwaModal) confirmPwaModal.addEventListener('click', () => pwaModal.classList.add('hidden'));
-    if (pwaModal) {
-      pwaModal.addEventListener('click', (e) => {
-        if (e.target === pwaModal) pwaModal.classList.add('hidden');
-      });
-    }
-
-    // 5. 설치 완료 이벤트 감지
+    // 4. 설치 완료 이벤트 감지
     window.addEventListener('appinstalled', () => {
-      console.log('🎉 PWA 앱이 성공적으로 설치되었습니다!');
+      console.log('🎉 PWA 앱 설치 완료');
       if (pwaBtn) {
         pwaBtn.textContent = '✨ 설치 완료!';
         pwaBtn.disabled = true;
