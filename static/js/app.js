@@ -11,6 +11,141 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadingMessage = document.getElementById("loadingMessage");
   const errorAlert = document.getElementById("errorAlert");
 
+  // ---------------------------------------------------------
+  // 0. 4자리 PIN 입장 게이트키퍼 제어
+  // ---------------------------------------------------------
+  const pinGate = document.getElementById("pinGate");
+  const pinGateForm = document.getElementById("pinGateForm");
+  const pinGateError = document.getElementById("pinGateError");
+  const pinDigits = Array.from(document.querySelectorAll(".pin-digit"));
+  const pinSubmitBtn = document.getElementById("pinSubmitBtn");
+
+  function initPinGate() {
+    if (!pinGate) return;
+
+    // 초기 인증 상태 확인 (쿠키 검증)
+    fetch("/api/auth/status")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated) {
+          unlockApp();
+        } else {
+          lockApp();
+        }
+      })
+      .catch(() => lockApp());
+
+    // 4자리 PIN 숫자 입력 & 자동 포커스 이동 & 백스페이스
+    pinDigits.forEach((input, index) => {
+      input.addEventListener("input", (e) => {
+        const val = e.target.value.replace(/[^0-9]/g, "");
+        e.target.value = val.slice(0, 1);
+
+        if (e.target.value && index < pinDigits.length - 1) {
+          pinDigits[index + 1].focus();
+        }
+
+        // 4자리가 모두 입력되면 자동으로 제출
+        const allFilled = pinDigits.every((d) => d.value.length === 1);
+        if (allFilled) {
+          submitPinGate();
+        }
+      });
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && !e.target.value && index > 0) {
+          pinDigits[index - 1].focus();
+        }
+      });
+
+      // 복사-붙여넣기로 4자리 일괄 입력 지원
+      input.addEventListener("paste", (e) => {
+        e.preventDefault();
+        const pasteData = (e.clipboardData || window.clipboardData).getData("text").trim();
+        const digits = pasteData.replace(/[^0-9]/g, "").slice(0, 4);
+        digits.split("").forEach((d, i) => {
+          if (pinDigits[i]) pinDigits[i].value = d;
+        });
+        if (digits.length === 4) {
+          pinDigits[3].focus();
+          submitPinGate();
+        }
+      });
+    });
+
+    if (pinGateForm) {
+      pinGateForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        submitPinGate();
+      });
+    }
+  }
+
+  async function submitPinGate() {
+    const pin = pinDigits.map((i) => i.value).join("");
+    if (pin.length !== 4) {
+      showPinError("비밀번호 4자리를 모두 입력해 주세요.");
+      return;
+    }
+
+    pinGateError.textContent = "";
+    pinGateError.classList.remove("shake");
+    if (pinSubmitBtn) {
+      pinSubmitBtn.disabled = true;
+      pinSubmitBtn.textContent = "확인 중...";
+    }
+
+    try {
+      const res = await fetch("/api/unlock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: pin })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        unlockApp();
+      } else {
+        showPinError(data.error || "비밀번호가 올바르지 않습니다.");
+        pinDigits.forEach((i) => (i.value = ""));
+        pinDigits[0].focus();
+      }
+    } catch (err) {
+      showPinError("서버와 통신 중 문제가 발생했습니다.");
+    } finally {
+      if (pinSubmitBtn) {
+        pinSubmitBtn.disabled = false;
+        pinSubmitBtn.textContent = "입장하기";
+      }
+    }
+  }
+
+  function lockApp() {
+    document.body.classList.add("is-locked");
+    if (pinGate) {
+      pinGate.removeAttribute("hidden");
+      setTimeout(() => pinDigits[0]?.focus(), 150);
+    }
+  }
+
+  function unlockApp() {
+    document.body.classList.remove("is-locked");
+    if (pinGate) {
+      pinGate.setAttribute("hidden", "");
+    }
+  }
+
+  function showPinError(msg) {
+    if (!pinGateError) return;
+    pinGateError.textContent = "⚠️ " + msg;
+    pinGateError.classList.remove("shake");
+    void pinGateError.offsetWidth;
+    pinGateError.classList.add("shake");
+  }
+
+  // PIN 게이트키퍼 초기화 실행
+  initPinGate();
+
   const badgeTarget = document.getElementById("badgeTarget");
   const badgeDday = document.getElementById("badgeDday");
   const planContent = document.getElementById("planContent");

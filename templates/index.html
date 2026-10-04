@@ -19,7 +19,27 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
+<body class="is-locked">
+
+  <!-- 4자리 PIN 입장 게이트키퍼 모달 -->
+  <div id="pinGate" class="pin-gate">
+    <div class="pin-gate-card">
+      <p class="pin-gate-kicker">🎯 AI Study Planner</p>
+      <h2>비밀번호 4자리를 입력하세요</h2>
+      <p class="pin-gate-help">한 번 입력하면 이 브라우저에서 24시간 동안 유지됩니다.</p>
+      <form id="pinGateForm" class="pin-gate-form" autocomplete="off">
+        <div class="pin-boxes" id="pinBoxes">
+          <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="비밀번호 1번째 자리" required autofocus>
+          <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="비밀번호 2번째 자리" required>
+          <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="비밀번호 3번째 자리" required>
+          <input class="pin-digit" type="password" inputmode="numeric" maxlength="1" pattern="[0-9]*" aria-label="비밀번호 4번째 자리" required>
+        </div>
+        <p class="pin-gate-error" id="pinGateError" role="alert"></p>
+        <button type="submit" class="btn btn-primary pin-gate-submit" id="pinSubmitBtn">입장하기</button>
+      </form>
+      <p class="pin-gate-credit">AI 학습 플래너 · 안전한 개인 맞춤 수험 로드맵</p>
+    </div>
+  </div>
 
   <!-- 상단 네비게이션 헤더 -->
   <header class="header">

@@ -1,6 +1,8 @@
 import os
 import json
 import logging
+import hmac
+import hashlib
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, make_response, send_from_directory
 from dotenv import load_dotenv
@@ -39,6 +41,23 @@ class VercelPathFix:
         return self.wsgi_app(environ, start_response)
 
 app.wsgi_app = VercelPathFix(app.wsgi_app)
+
+# PIN 비밀번호 및 보안 쿠키 설정
+SECRET_KEY = os.getenv("SECRET_KEY", "study-planner-secret-key-2026")
+app.secret_key = SECRET_KEY
+PIN_CODE = os.getenv("PIN_CODE", os.getenv("ACCESS_PIN", "1234")).strip()
+AUTH_COOKIE_NAME = "study_planner_auth"
+
+def make_auth_token():
+    return hmac.new(SECRET_KEY.encode(), PIN_CODE.encode(), hashlib.sha256).hexdigest()
+
+def is_authenticated():
+    if not PIN_CODE:
+        return True
+    token = request.cookies.get(AUTH_COOKIE_NAME)
+    if not token:
+        return False
+    return hmac.compare_digest(token, make_auth_token())
 
 def get_gemini_client():
     """요청 시점에 .env를 확인하여 Gemini 클라이언트 생성"""
@@ -122,6 +141,27 @@ def custom_static(filename):
     return send_from_directory(app.static_folder, filename)
 
 
+@app.route("/api/auth/status")
+@app.route("/auth/status")
+def auth_status():
+    """로그인 인증 상태 확인 (쿠키 검증)"""
+    return jsonify({"authenticated": is_authenticated()})
+
+
+@app.route("/api/unlock", methods=["POST"])
+@app.route("/unlock", methods=["POST"])
+def unlock():
+    """4자리 PIN 비밀번호 검증 및 24시간 인증 쿠키 발급"""
+    data = request.get_json(silent=True) or {}
+    password = str(data.get("password", "")).strip()
+
+    if not PIN_CODE or password == PIN_CODE:
+        resp = jsonify({"success": True})
+        resp.set_cookie(AUTH_COOKIE_NAME, make_auth_token(), max_age=86400, httponly=True, samesite='Lax')
+        return resp
+    return jsonify({"success": False, "error": "비밀번호가 올바르지 않습니다."}), 401
+
+
 @app.route("/")
 @app.route("/api")
 @app.route("/api/index")
@@ -135,6 +175,9 @@ def index():
 def generate_plan():
     start_time = datetime.now()
     logger.info("=== [플랜 생성 요청 수신] ===")
+
+    if not is_authenticated():
+        return jsonify({"success": False, "error": "인증이 필요합니다. 먼저 비밀번호 4자리를 입력해 주세요."}), 401
 
     data = request.get_json(silent=True)
     if not data:

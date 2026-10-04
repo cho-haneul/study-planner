@@ -90,6 +90,7 @@ pip install -r requirements.txt
 ```ini
 GEMINI_API_KEY=your_gemini_api_key_here
 SERPER_API_KEY=your_serper_api_key_here  # 선택 사항
+PIN_CODE=1234  # 4자리 입장 보안 비밀번호 (기본값: 1234)
 FLASK_PORT=5000
 ```
 
